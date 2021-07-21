@@ -14,4 +14,14 @@ router.get("/", function (req, res, next) {
   });
 });
 
+router.post("/", function (req, res, next) {
+  db.User.findByPk(1).then((user) => {
+    let data = {
+      title: "users",
+      usersName: user.name,
+    };
+    res.json(user);
+  });
+});
+
 module.exports = router;

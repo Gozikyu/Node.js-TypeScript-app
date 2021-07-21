@@ -1,24 +1,31 @@
 import React, { VFC, useState, useEffect } from "react";
-import "./App.css";
 import axios from "axios";
 
 const TopPage: VFC = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState("");
+
+  type axiosResponse = {
+    userName: string;
+  };
   const getUser = () => {
     axios
-      .get("http://localhost:3000/users", { withCredentials: true })
+      .get<axiosResponse>("http://localhost:3000/users", {
+        withCredentials: true,
+      })
       .then((user) => {
-        setUser(user);
+        if (typeof user == "string") setUser(user);
       });
   };
 
   useEffect(() => {
     getUser();
   });
+
+  console.log(user);
   return (
     <div className="container">
       <header>
-        <h1>{user}</h1>
+        <h1>hoge</h1>
       </header>
     </div>
   );
