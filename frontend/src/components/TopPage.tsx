@@ -1,31 +1,44 @@
-import React, { VFC, useState, useEffect } from "react";
+import React, { VFC, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 const TopPage: VFC = () => {
-  const [user, setUser] = useState("");
-
-  type axiosResponse = {
-    userName: string;
+  const initialUser = {
+    id: 0,
+    name: "initialState",
   };
-  const getUser = () => {
+  const [user, setUser] = useState<User>(initialUser);
+
+  type User = {
+    id: number;
+    name: string;
+  };
+
+  const isUser = useCallback((arg: any): arg is User => {
+    if (arg.id && arg.name) {
+      return true;
+    } else {
+      return false;
+    }
+  }, []);
+
+  const getUser = useCallback(() => {
     axios
-      .get<axiosResponse>("http://localhost:3000/users", {
+      .get("http://localhost:80/users", {
         withCredentials: true,
       })
-      .then((user) => {
-        if (typeof user == "string") setUser(user);
+      .then((res) => {
+        if (isUser(res.data.user)) setUser(res.data.user);
       });
-  };
+  }, [isUser]);
 
   useEffect(() => {
     getUser();
-  });
+  }, [getUser, isUser]);
 
-  console.log(user);
   return (
     <div className="container">
       <header>
-        <h1>hoge</h1>
+        <h1>{user.name}</h1>
       </header>
     </div>
   );
