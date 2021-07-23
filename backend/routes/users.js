@@ -4,14 +4,8 @@ var router = express.Router();
 const db = require("../models/index");
 const cors = require("cors");
 
-const corsOptions = {
-  origin: "http://localhost:3000",
-  optionsSuccessStatus: 200,
-  credentials: true,
-};
-
 /* GET users listing. */
-router.get("/", cors(corsOptions), function (req, res, next) {
+router.get("/", function (req, res, next) {
   db.User.findByPk(1).then((user) => {
     let data = {
       title: "users",
@@ -22,13 +16,24 @@ router.get("/", cors(corsOptions), function (req, res, next) {
 });
 
 router.post("/", function (req, res, next) {
-  db.User.findByPk(1).then((user) => {
-    let data = {
-      title: "users",
-      usersName: user.name,
-    };
-    res.send(data);
+  const data = {
+    userId: req.body.data.userId,
+    title: req.body.data.title,
+    category: req.body.data.category,
+    url: req.body.data.url,
+    description: req.body.data.description,
+  };
+  console.log(req.body.data);
+  db.sequelize.sync().then(() => {
+    db.Content.create(data)
+      .then((content) => {
+        res.send(content);
+      })
+      .catch(() => {
+        res.send("fail to create content");
+      });
   });
+  // res.send(req.body.data.title);
 });
 
 module.exports = router;
