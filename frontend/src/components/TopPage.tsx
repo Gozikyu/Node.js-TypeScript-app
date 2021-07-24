@@ -104,9 +104,6 @@ const TopPage: VFC = () => {
 
   return (
     <div className="container">
-      <header>
-        <h1>{user.name}</h1>
-      </header>
       <div className={classes.root}>
         <TextField
           className={classes.textInput}

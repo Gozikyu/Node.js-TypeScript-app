@@ -1,9 +1,21 @@
 import React, { VFC, useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import { makeStyles, createStyles, Theme } from "@material-ui/core";
 import { ContentsTable } from "./index";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      margin: "0 auto",
+      width: "80%",
+    },
+  })
+);
 
 const Contents: VFC = () => {
   const [contents, setContents] = useState<GivingContent[]>();
+
+  const classes = useStyles();
 
   type Content = {
     id: number;
@@ -65,7 +77,7 @@ const Contents: VFC = () => {
   useEffect(getContents, []);
 
   return contents ? (
-    <div>
+    <div className={classes.root}>
       <ContentsTable contents={contents} />
     </div>
   ) : (
