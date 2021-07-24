@@ -77,13 +77,14 @@ const TopPage: VFC = () => {
         withCredentials: true,
       })
       .then((res) => {
-        if (isUser(res.data.user)) setUser(res.data.user);
+        console.log(res.data);
+        if (isUser(res.data)) setUser(res.data);
       });
   }, [isUser]);
 
   const submitData = useCallback(() => {
     axios
-      .post("http://localhost:80/users", {
+      .post("http://localhost:80/contents", {
         data: {
           userId: 1,
           title: title,
