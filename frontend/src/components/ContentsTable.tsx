@@ -56,24 +56,24 @@ const ContentsTable: VFC<{ contents: Content[] }> = ({ contents }) => {
       <Table className={classes.table} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>タイトル</StyledTableCell>
-            <StyledTableCell align="right">カテゴリー</StyledTableCell>
-            <StyledTableCell align="right">URL</StyledTableCell>
-            <StyledTableCell align="right">説明</StyledTableCell>
+            <StyledTableCell align="center">タイトル</StyledTableCell>
+            <StyledTableCell align="center">カテゴリー</StyledTableCell>
+            <StyledTableCell align="center">URL</StyledTableCell>
+            <StyledTableCell align="center">説明</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {contents.map((content) => (
             <StyledTableRow>
-              <StyledTableCell component="th" scope="row">
-                {content.title}
-              </StyledTableCell>
+              <StyledTableCell align="center">{content.title}</StyledTableCell>
               {/* <StyledTableCell align="right">{content.title}</StyledTableCell> */}
-              <StyledTableCell align="right">
+              <StyledTableCell align="center">
                 {content.category}
               </StyledTableCell>
-              <StyledTableCell align="right">{content.url}</StyledTableCell>
-              <StyledTableCell align="right">
+              <StyledTableCell align="center">
+                <a href={content.url}>参考サイトへ</a>
+              </StyledTableCell>
+              <StyledTableCell align="center">
                 {content.description}
               </StyledTableCell>
             </StyledTableRow>
