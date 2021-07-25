@@ -69,15 +69,6 @@ const Contents: VFC = () => {
     }
   }, []);
 
-  const cutDescription = (description: string): string => {
-    if (description.length > 25) {
-      description = description.substr(0, 25) + "...";
-      return description;
-    } else {
-      return description;
-    }
-  };
-
   const searchingWord = () => {
     axios
       .post("http://localhost:80/contents/search", {
@@ -86,31 +77,20 @@ const Contents: VFC = () => {
           searchCategory: searchCategory,
         },
       })
-      .then((contents) => {
-        console.log(contents);
+      .then((res) => {
+        console.log(res.data);
+        setContents(res.data);
       });
   };
 
-  const newArray: GivingContent[] = useMemo(() => [], []);
+  let newArray: GivingContent[] = useMemo(() => [], []);
   const getContents = () => {
     axios
       .get("http://localhost:80/contents", {
         withCredentials: true,
       })
       .then((res) => {
-        if (Array.isArray(res.data)) {
-          res.data.map((content) => {
-            if (isContent(content)) {
-              newArray.push({
-                title: content.title,
-                category: content.category,
-                url: content.url,
-                description: cutDescription(content.description),
-              });
-            }
-          });
-          setContents(newArray);
-        }
+        setContents(res.data);
       })
       .catch((err) => {
         console.log(err);

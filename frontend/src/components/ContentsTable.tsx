@@ -36,6 +36,9 @@ const StyledTableRow = withStyles((theme: Theme) =>
 )(TableRow);
 
 const useStyles = makeStyles({
+  root: {
+    marginTop: "2rem",
+  },
   table: {
     minWidth: 700,
   },
@@ -48,11 +51,20 @@ type Content = {
   description: string;
 };
 
+const cutDescription = (description: string): string => {
+  if (description.length > 25) {
+    description = description.substr(0, 25) + "...";
+    return description;
+  } else {
+    return description;
+  }
+};
+
 const ContentsTable: VFC<{ contents: Content[] }> = ({ contents }) => {
   const classes = useStyles();
   console.log(contents[0]);
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} className={classes.root}>
       <Table className={classes.table} aria-label="customized table">
         <TableHead>
           <TableRow>
@@ -74,7 +86,7 @@ const ContentsTable: VFC<{ contents: Content[] }> = ({ contents }) => {
                 <a href={content.url}>参考サイトへ</a>
               </StyledTableCell>
               <StyledTableCell align="center">
-                {content.description}
+                {cutDescription(content.description)}
               </StyledTableCell>
             </StyledTableRow>
           ))}

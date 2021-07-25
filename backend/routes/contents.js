@@ -1,5 +1,6 @@
 const { response } = require("express");
 var express = require("express");
+var { Op } = require("sequelize");
 var router = express.Router();
 const db = require("../models/index");
 
@@ -29,6 +30,24 @@ router.post("/", function (req, res, next) {
       });
   });
   // res.send(req.body.data.title);
+});
+
+router.post("/search", (req, res, next) => {
+  console.log(req.body.data.searchCategory);
+
+  db.Content.findAll({
+    where: {
+      [Op.or]: {
+        title: { [Op.like]: "%" + req.body.data.searchWord + "%" },
+        description: { [Op.like]: "%" + req.body.data.searchWord + "%" },
+      },
+      category: { [Op.like]: "%" + req.body.data.searchCategory + "%" },
+    },
+  })
+    .then((contents) => [res.send(contents)])
+    .catch((err) => {
+      res.send(err.message);
+    });
 });
 
 module.exports = router;
