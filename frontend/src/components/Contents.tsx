@@ -3,6 +3,8 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
 import axios from "axios";
+import firebase from "firebase/app";
+import "firebase/firestore";
 import { ContentsTable } from "./index";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -18,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Contents: VFC = () => {
-  const [contents, setContents] = useState<GivingContent[]>(),
+  const [contents, setContents] = useState<Content[]>(),
     [searchWord, setSearchWord] = useState(""),
     [searchCategory, setSearchCategory] = useState("");
 
@@ -27,13 +29,6 @@ const Contents: VFC = () => {
   type Content = {
     id: number;
     userId: number;
-    title: string;
-    url: string;
-    category: string;
-    description: string;
-  };
-
-  type GivingContent = {
     title: string;
     url: string;
     category: string;
@@ -83,21 +78,22 @@ const Contents: VFC = () => {
       });
   };
 
-  let newArray: GivingContent[] = useMemo(() => [], []);
+  let gotData: any[] = [];
   const getContents = () => {
-    axios
-      .get("http://localhost:80/contents", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        setContents(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    axios.get("http://localhost:80/contents");
+    // firebase
+    //   .firestore()
+    //   .collection("contents")
+    //   .get()
+    //   .then((gotContents) => {
+    //     gotContents.docs.map((gotContent) => {
+    //       gotData.push(gotContent.data());
+    //     });
+    //     setContents(gotData);
+    //   });
   };
 
-  useEffect(getContents, [isContent, newArray]);
+  useEffect(getContents, [gotData]);
 
   return contents ? (
     <div className={classes.root}>

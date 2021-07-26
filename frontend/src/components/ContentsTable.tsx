@@ -13,6 +13,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import ReactPaginate from "react-paginate";
+import firebase from "firebase";
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({

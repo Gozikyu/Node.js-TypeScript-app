@@ -3,8 +3,8 @@ import axios from "axios";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
+import firebase from "firebase/app";
 
-import { auth } from "../firebase";
 import { useAuthContext } from "./AuthContext";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -88,16 +88,29 @@ const TopPage: VFC = () => {
   }, [isUser]);
 
   const submitData = useCallback(() => {
-    axios
-      .post("http://localhost:80/contents", {
-        data: {
-          userId: 1,
-          title: title,
-          category: category,
-          url: url,
-          description: description,
-        },
-      })
+    // axios
+    //   .post("http://localhost:80/contents", {
+    //     data: {
+    //       userId: 1,
+    //       title: title,
+    //       category: category,
+    //       url: url,
+    //       description: description,
+    //     },
+    //   })
+
+    const data = {
+      title: title,
+      category: category,
+      url: url,
+      description: description,
+    };
+
+    firebase
+      .firestore()
+      .collection("contents")
+      .doc()
+      .set(data)
       .then((res) => {
         console.log(res);
       });
