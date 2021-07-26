@@ -4,6 +4,9 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
 
+import { auth } from "../firebase";
+import { useAuthContext } from "./AuthContext";
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -21,6 +24,9 @@ const TopPage: VFC = () => {
     id: 0,
     name: "initialState",
   };
+
+  const value = useAuthContext();
+  console.log(value);
 
   const [user, setUser] = useState(initialUser),
     [title, setTitle] = useState(""),
@@ -77,7 +83,6 @@ const TopPage: VFC = () => {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data);
         if (isUser(res.data)) setUser(res.data);
       });
   }, [isUser]);
@@ -147,7 +152,6 @@ const TopPage: VFC = () => {
           color="primary"
           onClick={submitData}
         >
-          {console.log(title)}
           登録
         </Button>
       </div>

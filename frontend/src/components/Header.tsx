@@ -7,6 +7,7 @@ import {
   useHistory,
   useLocation,
 } from "react-router-dom";
+import { useAuthContext } from "./AuthContext";
 import axios from "axios";
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
@@ -37,8 +38,9 @@ const Header = () => {
 
   const history = useHistory();
   const location = useLocation();
-
   const classes = useStyles();
+
+  const value = useAuthContext();
 
   type User = {
     id: number;
@@ -78,7 +80,9 @@ const Header = () => {
 
   return user !== undefined ? (
     <div className={classes.root}>
-      <p className={classes.userName}> {user.name}</p>
+      <p className={classes.userName}>
+        {value.email ? value.email : "ログインしてください"}
+      </p>
       {location.pathname == "/" ? (
         <Button className={classes.button} onClick={pushToContentPage}>
           ワード検索ページヘ
