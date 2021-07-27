@@ -1,12 +1,8 @@
-import React, { VFC, useState, useEffect, useCallback } from "react";
+import { VFC, useState, useCallback } from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
-import { auth } from "../firebase";
-import firebase from "firebase/app";
-import "firebase/firestore";
 import axios from "axios";
-import { useRouteMatch } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,39 +44,18 @@ const SignUp: VFC = () => {
     [setPass]
   );
 
-  type User = {
-    name: string | undefined;
-    email: string | undefined;
-    id: string | undefined;
-  };
-
-  const isUser = (arg: any): arg is User => {
-    if (arg !== null && typeof arg.email === "string") {
-      return true;
-    } else {
-      return false;
-    }
-  };
   const submitUserInfo = () => {
-    axios.post("http://localhost:80/users").then((user) => {
-      console.log(user);
-    });
-    // auth.createUserWithEmailAndPassword(email, pass).then((result) => {
-    //   const registerdUser = result.user;
-    //   if (isUser(registerdUser)) {
-    //     const userData = {
-    //       name: name,
-    //       email: email,
-    //       uid: registerdUser.uid,
-    //     };
-    //     console.log(registerdUser);
-    //     firebase
-    //       .firestore()
-    //       .collection("users")
-    //       .doc(userData.uid)
-    //       .set(userData);
-    //   }
-    // });
+    axios
+      .post("http://localhost:80/users", {
+        data: {
+          name: name,
+          email: email,
+          pass: pass,
+        },
+      })
+      .then((user) => {
+        console.log(user);
+      });
   };
 
   return (

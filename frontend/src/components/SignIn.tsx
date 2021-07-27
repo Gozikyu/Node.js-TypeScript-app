@@ -38,14 +38,20 @@ const SignIn: VFC = () => {
   );
 
   const signIn = async () => {
-    await auth
-      .signInWithEmailAndPassword(email, pass)
-      .then((user) => {
-        console.log(user);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    axios.post("http://localhost:80/users/signin", {
+      data: {
+        email: email,
+        pass: pass,
+      },
+    });
+    // await auth
+    //   .signInWithEmailAndPassword(email, pass)
+    //   .then((user) => {
+    //     console.log(user);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   };
 
   return (

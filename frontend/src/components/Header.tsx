@@ -34,7 +34,11 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Header = () => {
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<User>({
+    uid: undefined,
+    email: undefined,
+    name: undefined,
+  });
 
   const history = useHistory();
   const location = useLocation();
@@ -42,13 +46,20 @@ const Header = () => {
 
   const value = useAuthContext();
 
+  console.log(value);
+
   type User = {
-    id: number;
-    name: string;
+    uid: string | undefined;
+    email: string | undefined;
+    name: string | undefined;
   };
 
   const isUser = useCallback((arg: any): arg is User => {
-    if (arg.id && arg.name) {
+    if (
+      typeof arg.uid == "string" &&
+      typeof arg.email == "string" &&
+      typeof arg.name == "string"
+    ) {
       return true;
     } else {
       return false;
@@ -61,7 +72,6 @@ const Header = () => {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data);
         if (isUser(res.data)) setUser(res.data);
       });
   }, [isUser]);
@@ -74,6 +84,21 @@ const Header = () => {
     history.push("/");
   };
 
+  const checkLogin = () => {
+    console.log("check");
+    axios.get("http://localhost:80/users/loginUser").then((user) => {
+      if (isUser(user.data)) {
+        setUser(user.data);
+        console.log(user.data);
+      } else {
+        console.log("User型ではありません");
+        console.log(user);
+      }
+    });
+  };
+
+  useEffect(checkLogin, []);
+
   useEffect(() => {
     getUser();
   }, [getUser, isUser]);
@@ -81,7 +106,7 @@ const Header = () => {
   return user !== undefined ? (
     <div className={classes.root}>
       <p className={classes.userName}>
-        {value.email ? value.email : "ログインしてください"}
+        {user.name ? user.name : "ログインしてください"}
       </p>
       {location.pathname == "/" ? (
         <Button className={classes.button} onClick={pushToContentPage}>

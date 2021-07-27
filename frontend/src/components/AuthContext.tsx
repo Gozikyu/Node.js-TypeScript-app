@@ -1,3 +1,5 @@
+import { useRadioGroup } from "@material-ui/core";
+import axios from "axios";
 import {
   createContext,
   useState,
@@ -9,14 +11,24 @@ import {
 import { useHistory } from "react-router-dom";
 import { auth } from "../firebase";
 
-const AuthContext = createContext<User>({ email: undefined });
-
 type User = {
+  uid: string | undefined;
   email: string | undefined;
+  name: string | undefined;
 };
 
+const AuthContext = createContext<User>({
+  uid: undefined,
+  email: undefined,
+  name: undefined,
+});
+
 const isUser = (arg: any): arg is User => {
-  if (arg !== null && typeof arg.email === "string") {
+  if (
+    typeof arg.uid == "string" &&
+    typeof arg.email == "string" &&
+    typeof arg.name == "string"
+  ) {
     return true;
   } else {
     return false;
@@ -28,33 +40,58 @@ export function useAuthContext() {
 }
 
 const AuthProvider: FC = ({ children }) => {
-  const [user, setUser] = useState<User>({ email: undefined }),
+  const [user, setUser] = useState<User>({
+      uid: undefined,
+      email: undefined,
+      name: undefined,
+    }),
     [loading, setLoading] = useState(true);
 
   const history = useHistory();
 
-  useEffect(() => {
-    const checkLogin = auth.onAuthStateChanged((user) => {
-      if (isUser(user)) {
-        setUser(user);
+  // const checkLogin = () => {
+  //   console.log("check");
+  //   axios.get("http://localhost:80/users/loginUser").then((user) => {
+  //     // if (isUser(user)) {
+  //     // setUser(user);
+  //     console.log(user.data.uid);
+  //   });
+  // };
+
+  const checkLogin = () => {
+    console.log("check");
+    axios.get("http://localhost:80/users/loginUser").then((user) => {
+      if (isUser(user.data)) {
+        setUser(user.data);
         setLoading(false);
-        console.log(user);
       } else {
+        console.log("User型ではありません");
+        console.log(user);
         setLoading(false);
-        history.push("/signin");
       }
     });
-    return () => {
-      checkLogin();
-    };
-  }, []);
-
-  const value = {
-    email: user.email,
   };
 
+  useEffect(
+    // const checkLogin = auth.onAuthStateChanged((user) => {
+    //   if (isUser(user)) {
+    //     setUser(user);
+    //     setLoading(false);
+    //     console.log(user);
+    //   } else {
+    //     setLoading(false);
+    //     history.push("/signin");
+    //   }
+    // });
+    // return () => {
+    //   checkLogin();
+    // };
+    checkLogin,
+    []
+  );
+
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={user}>
       {!loading && children}
     </AuthContext.Provider>
   );
