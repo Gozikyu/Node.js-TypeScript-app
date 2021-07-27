@@ -1,10 +1,8 @@
-import React, { VFC, useState, useEffect, useCallback, useMemo } from "react";
+import React, { VFC, useState, useEffect, useCallback } from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
 import axios from "axios";
-import firebase from "firebase/app";
-import "firebase/firestore";
 import { ContentsTable } from "./index";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -49,20 +47,20 @@ const Contents: VFC = () => {
     [setSearchCategory]
   );
 
-  const isContent = useCallback((arg: any): arg is Content => {
-    if (
-      typeof arg.id === "number" &&
-      typeof arg.userId === "number" &&
-      typeof arg.title === "string" &&
-      typeof arg.url === "string" &&
-      typeof arg.category === "string" &&
-      typeof arg.description === "string"
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }, []);
+  // const isContent = useCallback((arg: any): arg is Content => {
+  //   if (
+  //     typeof arg.id === "number" &&
+  //     typeof arg.userId === "number" &&
+  //     typeof arg.title === "string" &&
+  //     typeof arg.url === "string" &&
+  //     typeof arg.category === "string" &&
+  //     typeof arg.description === "string"
+  //   ) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }, []);
 
   const searchingWord = () => {
     axios
@@ -78,22 +76,14 @@ const Contents: VFC = () => {
       });
   };
 
-  let gotData: any[] = [];
   const getContents = () => {
-    axios.get("http://localhost:80/contents");
-    // firebase
-    //   .firestore()
-    //   .collection("contents")
-    //   .get()
-    //   .then((gotContents) => {
-    //     gotContents.docs.map((gotContent) => {
-    //       gotData.push(gotContent.data());
-    //     });
-    //     setContents(gotData);
-    //   });
+    console.log("hi");
+    axios
+      .get("http://localhost:80/contents")
+      .then((contents) => setContents(contents.data));
   };
 
-  useEffect(getContents, [gotData]);
+  useEffect(getContents, []);
 
   return contents ? (
     <div className={classes.root}>
