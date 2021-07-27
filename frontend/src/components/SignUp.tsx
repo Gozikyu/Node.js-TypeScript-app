@@ -5,6 +5,8 @@ import { makeStyles, createStyles, Theme } from "@material-ui/core";
 import { auth } from "../firebase";
 import firebase from "firebase/app";
 import "firebase/firestore";
+import axios from "axios";
+import { useRouteMatch } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -60,23 +62,25 @@ const SignUp: VFC = () => {
     }
   };
   const submitUserInfo = () => {
-    auth.createUserWithEmailAndPassword(email, pass).then((result) => {
-      const registerdUser = result.user;
-
-      if (isUser(registerdUser)) {
-        const userData = {
-          name: name,
-          email: email,
-          uid: registerdUser.uid,
-        };
-        console.log(registerdUser);
-        firebase
-          .firestore()
-          .collection("users")
-          .doc(userData.uid)
-          .set(userData);
-      }
+    axios.post("http://localhost:80/users").then((user) => {
+      console.log(user);
     });
+    // auth.createUserWithEmailAndPassword(email, pass).then((result) => {
+    //   const registerdUser = result.user;
+    //   if (isUser(registerdUser)) {
+    //     const userData = {
+    //       name: name,
+    //       email: email,
+    //       uid: registerdUser.uid,
+    //     };
+    //     console.log(registerdUser);
+    //     firebase
+    //       .firestore()
+    //       .collection("users")
+    //       .doc(userData.uid)
+    //       .set(userData);
+    //   }
+    // });
   };
 
   return (
