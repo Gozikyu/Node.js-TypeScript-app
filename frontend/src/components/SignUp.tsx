@@ -53,9 +53,17 @@ const SignUp: VFC = () => {
           pass: pass,
         },
       })
-      .then((user) => {
-        console.log(user);
-      });
+      .then((res) => {
+        if (res.data.status === "200") {
+          alert("ユーザー登録しました");
+        } else {
+          alert("ユーザー登録に失敗しました");
+        }
+      })
+      .catch((err) => {
+        alert(err);
+      })
+      .then(() => {});
   };
 
   return (

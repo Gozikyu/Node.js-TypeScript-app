@@ -1,9 +1,8 @@
-import React, { VFC, useState, useEffect, useCallback } from "react";
+import { VFC, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
-import firebase from "firebase/app";
 
 import { useAuthContext } from "./AuthContext";
 
@@ -25,14 +24,20 @@ const TopPage: VFC = () => {
     name: "initialState",
   };
 
-  const value = useAuthContext();
-  console.log(value);
+  const context = useAuthContext();
 
   const [user, setUser] = useState(initialUser),
     [title, setTitle] = useState(""),
     [category, setCategory] = useState(""),
     [url, setUrl] = useState(""),
     [description, setDescription] = useState("");
+
+  const resetTextBox = () => {
+    setTitle("");
+    setCategory("");
+    setUrl("");
+    setDescription("");
+  };
 
   const inputTitle = useCallback(
     (e) => {
@@ -88,31 +93,24 @@ const TopPage: VFC = () => {
   }, [isUser]);
 
   const submitData = useCallback(() => {
-    // axios
-    //   .post("http://localhost:80/contents", {
-    //     data: {
-    //       userId: 1,
-    //       title: title,
-    //       category: category,
-    //       url: url,
-    //       description: description,
-    //     },
-    //   })
-
-    const data = {
-      title: title,
-      category: category,
-      url: url,
-      description: description,
-    };
-
-    firebase
-      .firestore()
-      .collection("contents")
-      .doc()
-      .set(data)
-      .then((res) => {
-        console.log(res);
+    axios
+      .post("http://localhost:80/contents", {
+        data: {
+          uid: context.uid,
+          title: title,
+          category: category,
+          url: url,
+          description: description,
+        },
+      })
+      .then((content) => {
+        content
+          ? alert("ワード登録が完了しました")
+          : alert("登録に失敗しました。通信環境を確認してください");
+        resetTextBox();
+      })
+      .catch((err) => {
+        alert(err);
       });
   }, [title, category, url, description]);
 

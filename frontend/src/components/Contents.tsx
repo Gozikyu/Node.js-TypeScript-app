@@ -77,10 +77,10 @@ const Contents: VFC = () => {
   };
 
   const getContents = () => {
-    console.log("hi");
-    axios
-      .get("http://localhost:80/contents")
-      .then((contents) => setContents(contents.data));
+    axios.get("http://localhost:80/contents").then((contents) => {
+      console.log(contents);
+      setContents(contents.data);
+    });
   };
 
   useEffect(getContents, []);

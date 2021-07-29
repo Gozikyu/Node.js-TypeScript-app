@@ -1,15 +1,6 @@
-import { useRadioGroup } from "@material-ui/core";
 import axios from "axios";
-import {
-  createContext,
-  useState,
-  useContext,
-  useEffect,
-  useCallback,
-  FC,
-} from "react";
+import { createContext, useState, useContext, useEffect, FC } from "react";
 import { useHistory } from "react-router-dom";
-import { auth } from "../firebase";
 
 type User = {
   uid: string | undefined;
@@ -39,60 +30,39 @@ export function useAuthContext() {
   return useContext(AuthContext);
 }
 
-const AuthProvider: FC = ({ children }) => {
+const AuthProvider: FC<{ loginUser: User }> = ({ children, loginUser }) => {
   const [user, setUser] = useState<User>({
-      uid: undefined,
-      email: undefined,
-      name: undefined,
-    }),
-    [loading, setLoading] = useState(true);
+    uid: undefined,
+    email: undefined,
+    name: undefined,
+  });
 
   const history = useHistory();
 
-  // const checkLogin = () => {
-  //   console.log("check");
-  //   axios.get("http://localhost:80/users/loginUser").then((user) => {
-  //     // if (isUser(user)) {
-  //     // setUser(user);
-  //     console.log(user.data.uid);
-  //   });
-  // };
-
   const checkLogin = () => {
     console.log("check");
-    axios.get("http://localhost:80/users/loginUser").then((user) => {
-      if (isUser(user.data)) {
-        setUser(user.data);
-        setLoading(false);
-      } else {
-        console.log("User型ではありません");
-        console.log(user);
-        setLoading(false);
-      }
-    });
+
+    axios
+      .get("http://localhost:80/users/loginUser")
+      .then((user) => {
+        if (isUser(user.data)) {
+          setUser(user.data);
+        } else {
+          console.log("User型ではありません");
+          history.push("/signin");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        history.push("/signin");
+      });
   };
 
-  useEffect(
-    // const checkLogin = auth.onAuthStateChanged((user) => {
-    //   if (isUser(user)) {
-    //     setUser(user);
-    //     setLoading(false);
-    //     console.log(user);
-    //   } else {
-    //     setLoading(false);
-    //     history.push("/signin");
-    //   }
-    // });
-    // return () => {
-    //   checkLogin();
-    // };
-    checkLogin,
-    []
-  );
-
+  useEffect(checkLogin, []);
+  console.log(loginUser);
   return (
     <AuthContext.Provider value={user}>
-      {!loading && children}
+      {loginUser.uid && children}
     </AuthContext.Provider>
   );
 };
