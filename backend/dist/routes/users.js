@@ -41,7 +41,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var router = express_1.default.Router();
-// import db from "../models/index";
 var firebase_1 = __importDefault(require("../firebase"));
 var app_1 = __importDefault(require("firebase/app"));
 require("firebase/firestore");

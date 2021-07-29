@@ -43,12 +43,14 @@ var express_1 = __importDefault(require("express"));
 var router = express_1.default.Router();
 var app_1 = __importDefault(require("firebase/app"));
 require("firebase/firestore");
+var dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 // Initialize Cloud Firestore through Firebase
 if (!app_1.default.apps.length) {
     app_1.default.initializeApp({
-        apiKey: "AIzaSyC4Hn1dS3zSomUAgLQCsQCwzD9j0SHr22o",
-        authDomain: "node-typescript-app.firebaseapp.com",
-        projectId: "node-typescript-app",
+        apiKey: String(process.env.apikey),
+        authDomain: String(process.env.authDomain),
+        projectId: String(process.env.projectId),
     });
 }
 var db = app_1.default.firestore();

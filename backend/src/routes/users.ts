@@ -1,7 +1,5 @@
-import { response } from "express";
 import express from "express";
 let router = express.Router();
-// import db from "../models/index";
 import auth from "../firebase";
 import firebase from "firebase/app";
 import "firebase/firestore";

@@ -1,17 +1,17 @@
-import { response } from "express";
 import express from "express";
 let router = express.Router();
-import { Op } from "sequelize";
 import firebase from "firebase/app";
 import "firebase/firestore";
-import { ServiceAccount } from "firebase-admin";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // Initialize Cloud Firestore through Firebase
 if (!firebase.apps.length) {
   firebase.initializeApp({
-    apiKey: "AIzaSyC4Hn1dS3zSomUAgLQCsQCwzD9j0SHr22o",
-    authDomain: "node-typescript-app.firebaseapp.com",
-    projectId: "node-typescript-app",
+    apiKey: String(process.env.apikey),
+    authDomain: String(process.env.authDomain),
+    projectId: String(process.env.projectId),
   });
 }
 
@@ -71,17 +71,6 @@ router.post("/", async (req, res, next) => {
     .catch((err) => {
       console.error(err);
     });
-  // console.log(req.body.data);
-  // db.sequelize.sync().then(() => {
-  //   db.Content.create(data)
-  //     .then((content) => {
-  //       res.send(content);
-  //     })
-  //     .catch(() => {
-  //       res.send("fail to create content");
-  //     });
-  // });
-  // res.send(req.body.data.title);
 });
 
 router.post("/search", async (req, res, next) => {
