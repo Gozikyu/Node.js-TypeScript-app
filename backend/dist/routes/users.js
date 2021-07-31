@@ -44,6 +44,7 @@ var router = express_1.default.Router();
 var firebase_1 = __importDefault(require("../firebase"));
 var app_1 = __importDefault(require("firebase/app"));
 require("firebase/firestore");
+// 型ガード用の関数。type Userの属性を持っていればtrueを返し、引数の型をUser似設定。
 var isUser = function (arg) {
     if (typeof arg.uid == "string" && typeof arg.email == "string") {
         return true;
@@ -52,17 +53,19 @@ var isUser = function (arg) {
         return false;
     }
 };
+// firebase Authにログイン状況を問い合わせ、ログインしていれば更にfirestoreから取得したログインユーザーのデータを返す。
 router.get("/loginUser", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        firebase_1.default.onAuthStateChanged(function (snapshot) {
-            if (snapshot) {
+        firebase_1.default.onAuthStateChanged(function (user) {
+            if (user) {
                 app_1.default
                     .firestore()
                     .collection("users")
-                    .doc(snapshot.uid)
+                    .doc(user.uid)
                     .get()
-                    .then(function (user) {
-                    res.json(user.data());
+                    .then(function (user_at_firestore) {
+                    // res.json(user_at_firestore.data());
+                    res.status(200).json({ user: user_at_firestore.data() });
                 });
             }
             else {
@@ -73,23 +76,24 @@ router.get("/loginUser", function (req, res, next) { return __awaiter(void 0, vo
         return [2 /*return*/];
     });
 }); });
+// firebase Authでユーザ認証、認証が通れば、そのユーザーの情報をfirestoreから取得し返す。
 router.post("/signin", function (req, res, next) {
     firebase_1.default
         .signInWithEmailAndPassword(req.body.data.email, req.body.data.pass)
         .then(function (result) {
         var user = result.user;
-        console.log(user && user.uid);
         user &&
             app_1.default
                 .firestore()
                 .collection("users")
                 .doc(user.uid)
                 .get()
-                .then(function (user) {
-                return res.status(200).json({ user: user.data() });
+                .then(function (user_at_firestore) {
+                return res.status(200).json({ user: user_at_firestore.data() });
             });
     })
         .catch(function (err) {
+        console.log(err);
         return res.status(500).json({ message: err.message });
     });
 });

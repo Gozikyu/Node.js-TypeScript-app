@@ -10,6 +10,7 @@ type User = {
   name?: string | undefined;
 };
 
+// 型ガード用の関数。type Userの属性を持っていればtrueを返し、引数の型をUser似設定。
 const isUser = (arg: any): arg is User => {
   if (typeof arg.uid == "string" && typeof arg.email == "string") {
     return true;
@@ -18,16 +19,18 @@ const isUser = (arg: any): arg is User => {
   }
 };
 
+// firebase Authにログイン状況を問い合わせ、ログインしていれば更にfirestoreから取得したログインユーザーのデータを返す。
 router.get("/loginUser", async (req, res, next) => {
-  auth.onAuthStateChanged((snapshot) => {
-    if (snapshot) {
+  auth.onAuthStateChanged((user) => {
+    if (user) {
       firebase
         .firestore()
         .collection("users")
-        .doc(snapshot.uid)
+        .doc(user.uid)
         .get()
-        .then((user) => {
-          res.json(user.data());
+        .then((user_at_firestore) => {
+          // res.json(user_at_firestore.data());
+          res.status(200).json({ user: user_at_firestore.data() });
         });
     } else {
       console.log("ログインしてください");
@@ -36,23 +39,24 @@ router.get("/loginUser", async (req, res, next) => {
   });
 });
 
+// firebase Authでユーザ認証、認証が通れば、そのユーザーの情報をfirestoreから取得し返す。
 router.post("/signin", function (req, res, next) {
   auth
     .signInWithEmailAndPassword(req.body.data.email, req.body.data.pass)
     .then((result) => {
       const user = result.user;
-      console.log(user && user.uid);
       user &&
         firebase
           .firestore()
           .collection("users")
           .doc(user.uid)
           .get()
-          .then((user) => {
-            return res.status(200).json({ user: user.data() });
+          .then((user_at_firestore) => {
+            return res.status(200).json({ user: user_at_firestore.data() });
           });
     })
     .catch((err) => {
+      console.log(err);
       return res.status(500).json({ message: err.message });
     });
 });

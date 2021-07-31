@@ -61,10 +61,10 @@ const Routing: VFC = () => {
         </Route>
         <Route exact path="/signup" component={SignUp} />
         <Switch>
-          <AuthProvider loginUser={loginUser}>
-            <Route exact path="/" component={TopPage} />
-            <Route exact path="/contents" component={Contents} />
-          </AuthProvider>
+          {/* <AuthProvider loginUser={loginUser}> */}
+          <Route exact path="/" component={TopPage} />
+          <Route exact path="/contents" component={Contents} />
+          {/* </AuthProvider> */}
         </Switch>
       </Router>
     </div>
