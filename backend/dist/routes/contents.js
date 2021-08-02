@@ -41,19 +41,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var router = express_1.default.Router();
-var app_1 = __importDefault(require("firebase/app"));
 require("firebase/firestore");
+var firebase_1 = require("../firebase");
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-// Initialize Cloud Firestore through Firebase
-if (!app_1.default.apps.length) {
-    app_1.default.initializeApp({
-        apiKey: String(process.env.apikey),
-        authDomain: String(process.env.authDomain),
-        projectId: String(process.env.projectId),
-    });
-}
-var db = app_1.default.firestore();
 var isContent = function (arg) {
     if (typeof arg.title === "string" &&
         typeof arg.url === "string" &&
@@ -72,7 +63,7 @@ router.get("/", function (req, res, next) { return __awaiter(void 0, void 0, voi
         switch (_a.label) {
             case 0:
                 contents = [];
-                return [4 /*yield*/, db.collection("contents").get()];
+                return [4 /*yield*/, firebase_1.db.collection("contents").get()];
             case 1:
                 snapshot = _a.sent();
                 snapshot.docs.map(function (content) {
@@ -91,7 +82,7 @@ router.post("/", function (req, res, next) { return __awaiter(void 0, void 0, vo
     var snapshot, data;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, db.collection("contents")];
+            case 0: return [4 /*yield*/, firebase_1.db.collection("contents")];
             case 1:
                 snapshot = _a.sent();
                 data = {
@@ -121,7 +112,7 @@ router.post("/search", function (req, res, next) { return __awaiter(void 0, void
         switch (_a.label) {
             case 0:
                 contents = [];
-                return [4 /*yield*/, db.collection("contents").get()];
+                return [4 /*yield*/, firebase_1.db.collection("contents").get()];
             case 1:
                 snapshot = _a.sent();
                 return [4 /*yield*/, snapshot.docs.map(function (content) {

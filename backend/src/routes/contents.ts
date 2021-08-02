@@ -2,20 +2,21 @@ import express from "express";
 let router = express.Router();
 import firebase from "firebase/app";
 import "firebase/firestore";
+import { db } from "../firebase";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 // Initialize Cloud Firestore through Firebase
-if (!firebase.apps.length) {
-  firebase.initializeApp({
-    apiKey: String(process.env.apikey),
-    authDomain: String(process.env.authDomain),
-    projectId: String(process.env.projectId),
-  });
-}
+// if (!firebase.apps.length) {
+//   firebase.initializeApp({
+//     apiKey: String(process.env.apikey),
+//     authDomain: String(process.env.authDomain),
+//     projectId: String(process.env.projectId),
+//   });
+// }
 
-let db = firebase.firestore();
+// let db = firebase.firestore();
 
 type Content = {
   title: string;
