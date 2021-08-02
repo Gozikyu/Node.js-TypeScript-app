@@ -1,6 +1,6 @@
 import express from "express";
 let router = express.Router();
-import auth from "../firebase";
+import { auth } from "../firebase";
 import firebase from "firebase/app";
 import "firebase/firestore";
 
@@ -19,22 +19,21 @@ const isUser = (arg: any): arg is User => {
   }
 };
 
+const userCollection = firebase.firestore().collection("users");
+
 // firebase Authにログイン状況を問い合わせ、ログインしていれば更にfirestoreから取得したログインユーザーのデータを返す。
 router.get("/loginUser", async (req, res, next) => {
   auth.onAuthStateChanged((user) => {
     if (user) {
-      firebase
-        .firestore()
-        .collection("users")
+      userCollection
         .doc(user.uid)
         .get()
         .then((user_at_firestore) => {
-          // res.json(user_at_firestore.data());
           res.status(200).json({ user: user_at_firestore.data() });
         });
     } else {
       console.log("ログインしてください");
-      res.json(null);
+      res.status(500).json({ message: "ログインしてください" });
     }
   });
 });
@@ -46,9 +45,7 @@ router.post("/signin", function (req, res, next) {
     .then((result) => {
       const user = result.user;
       user &&
-        firebase
-          .firestore()
-          .collection("users")
+        userCollection
           .doc(user.uid)
           .get()
           .then((user_at_firestore) => {
@@ -73,28 +70,22 @@ router.post("/", function (req, res, next) {
           email: req.body.data.email,
           uid: registerdUser.uid,
         };
-        firebase
-          .firestore()
-          .collection("users")
+        userCollection
           .doc(userData.uid)
           .set(userData)
-          .then((reslut) => {
-            const user = result.user;
-            if (isUser(user)) {
-              res.json({ status: "200", user: user });
-            } else {
-              res.json({ status: "500", message: user });
-            }
+          // setの返り値はPromise<void>
+          .then(() => {
+            res.status(200).json({ message: "ユーザー登録に成功しました" });
           })
           .catch((err) => {
             console.log(err);
-            res.json({ status: "500", message: err });
+            res.status(500).json({ message: "ユーザー登録に失敗しました" });
           });
       }
     })
     .catch((err) => {
       console.log(err);
-      res.json({ status: "500", message: err });
+      res.status(500).json({ message: err.message });
     });
 });
 

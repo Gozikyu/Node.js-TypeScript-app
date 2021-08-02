@@ -41,7 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var router = express_1.default.Router();
-var firebase_1 = __importDefault(require("../firebase"));
+var firebase_1 = require("../firebase");
 var app_1 = __importDefault(require("firebase/app"));
 require("firebase/firestore");
 // 型ガード用の関数。type Userの属性を持っていればtrueを返し、引数の型をUser似設定。
@@ -53,24 +53,22 @@ var isUser = function (arg) {
         return false;
     }
 };
+var userCollection = app_1.default.firestore().collection("users");
 // firebase Authにログイン状況を問い合わせ、ログインしていれば更にfirestoreから取得したログインユーザーのデータを返す。
 router.get("/loginUser", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        firebase_1.default.onAuthStateChanged(function (user) {
+        firebase_1.auth.onAuthStateChanged(function (user) {
             if (user) {
-                app_1.default
-                    .firestore()
-                    .collection("users")
+                userCollection
                     .doc(user.uid)
                     .get()
                     .then(function (user_at_firestore) {
-                    // res.json(user_at_firestore.data());
                     res.status(200).json({ user: user_at_firestore.data() });
                 });
             }
             else {
                 console.log("ログインしてください");
-                res.json(null);
+                res.status(500).json({ message: "ログインしてください" });
             }
         });
         return [2 /*return*/];
@@ -78,14 +76,12 @@ router.get("/loginUser", function (req, res, next) { return __awaiter(void 0, vo
 }); });
 // firebase Authでユーザ認証、認証が通れば、そのユーザーの情報をfirestoreから取得し返す。
 router.post("/signin", function (req, res, next) {
-    firebase_1.default
+    firebase_1.auth
         .signInWithEmailAndPassword(req.body.data.email, req.body.data.pass)
         .then(function (result) {
         var user = result.user;
         user &&
-            app_1.default
-                .firestore()
-                .collection("users")
+            userCollection
                 .doc(user.uid)
                 .get()
                 .then(function (user_at_firestore) {
@@ -98,7 +94,7 @@ router.post("/signin", function (req, res, next) {
     });
 });
 router.post("/", function (req, res, next) {
-    firebase_1.default
+    firebase_1.auth
         .createUserWithEmailAndPassword(req.body.data.email, req.body.data.pass)
         .then(function (result) {
         var registerdUser = result.user;
@@ -108,29 +104,22 @@ router.post("/", function (req, res, next) {
                 email: req.body.data.email,
                 uid: registerdUser.uid,
             };
-            app_1.default
-                .firestore()
-                .collection("users")
+            userCollection
                 .doc(userData.uid)
                 .set(userData)
-                .then(function (reslut) {
-                var user = result.user;
-                if (isUser(user)) {
-                    res.json({ status: "200", user: user });
-                }
-                else {
-                    res.json({ status: "500", message: user });
-                }
+                // setの返り値はPromise<void>
+                .then(function () {
+                res.status(200).json({ message: "ユーザー登録に成功しました" });
             })
                 .catch(function (err) {
                 console.log(err);
-                res.json({ status: "500", message: err });
+                res.status(500).json({ message: "ユーザー登録に失敗しました" });
             });
         }
     })
         .catch(function (err) {
         console.log(err);
-        res.json({ status: "500", message: err });
+        res.status(500).json({ message: err.message });
     });
 });
 exports.default = router;
