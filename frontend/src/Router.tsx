@@ -41,9 +41,9 @@ const Routing: VFC = () => {
   };
 
   const checkLogin = () => {
-    axios.get("http://localhost:80/users/loginUser").then((user) => {
-      if (isUser(user.data)) {
-        setLoginUser(user.data);
+    axios.get("http://localhost:80/users/loginUser").then((res) => {
+      if (isUser(res.data.user)) {
+        setLoginUser(res.data.user);
       } else {
         console.log("User型ではありません");
       }
