@@ -4,8 +4,6 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
 
-import { useAuthContext } from "./AuthContext";
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -18,13 +16,17 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const TopPage: VFC = () => {
+type User = {
+  uid: string | undefined;
+  email: string | undefined;
+  name: string | undefined;
+};
+
+const TopPage: VFC<{ loginUser: User }> = ({ loginUser }) => {
   const initialUser = {
     id: 0,
     name: "initialState",
   };
-
-  const context = useAuthContext();
 
   const [user, setUser] = useState(initialUser),
     [title, setTitle] = useState(""),
@@ -93,10 +95,11 @@ const TopPage: VFC = () => {
   }, [isUser]);
 
   const submitData = useCallback(() => {
+    console.log("aaaaaaaa");
     axios
       .post("http://localhost:80/contents", {
         data: {
-          uid: context.uid,
+          uid: loginUser.uid,
           title: title,
           category: category,
           url: url,
@@ -104,12 +107,14 @@ const TopPage: VFC = () => {
         },
       })
       .then((content) => {
+        console.log("hhhh");
         content
           ? alert("ワード登録が完了しました")
           : alert("登録に失敗しました。通信環境を確認してください");
         resetTextBox();
       })
       .catch((err) => {
+        console.log("catch");
         alert(err);
       });
   }, [title, category, url, description]);

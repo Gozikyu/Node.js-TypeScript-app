@@ -37,18 +37,19 @@ const AuthProvider: FC<{ loginUser: User }> = ({ children, loginUser }) => {
     name: undefined,
   });
 
+  console.log(user);
   const history = useHistory();
 
+  // loginUser返ってくる場合はuserにユーザを登録、いない場合はサインインページに遷移させる。
   const checkLogin = () => {
-    console.log("check");
-
     axios
       .get("http://localhost:80/users/loginUser")
       .then((user) => {
-        if (isUser(user.data)) {
-          setUser(user.data);
+        console.log(user.data.user);
+        if (isUser(user.data.user.id)) {
+          setUser(user.data.user);
         } else {
-          console.log("User型ではありません");
+          console.log("ログインしていません");
           history.push("/signin");
         }
       })
@@ -59,7 +60,7 @@ const AuthProvider: FC<{ loginUser: User }> = ({ children, loginUser }) => {
   };
 
   useEffect(checkLogin, []);
-  console.log(loginUser);
+
   return (
     <AuthContext.Provider value={user}>
       {loginUser.uid && children}
