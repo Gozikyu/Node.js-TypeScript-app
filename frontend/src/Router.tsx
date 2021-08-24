@@ -1,4 +1,4 @@
-import { VFC, useState, useEffect, useCallback } from "react";
+import { VFC, useState, useEffect, useCallback, createContext } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import axios from "axios";
 import {
@@ -10,18 +10,24 @@ import {
   SignIn,
 } from "./components/index";
 
+type User = {
+  uid: string | undefined;
+  email: string | undefined;
+  name: string | undefined;
+};
+
+export const AuthContext = createContext<User>({
+  uid: undefined,
+  email: undefined,
+  name: undefined,
+});
+
 const Routing: VFC = () => {
   const [loginUser, setLoginUser] = useState<User>({
     uid: undefined,
     email: undefined,
     name: undefined,
   });
-
-  type User = {
-    uid: string | undefined;
-    email: string | undefined;
-    name: string | undefined;
-  };
 
   const isUser = useCallback((arg: any): arg is User => {
     if (
@@ -51,24 +57,24 @@ const Routing: VFC = () => {
   };
 
   useEffect(checkLogin, []);
-  console.log(loginUser);
   return (
     <div>
       <Router>
-        <Header loginUser={loginUser} />
-        <Switch>
-          <Route exact path="/signin">
-            <SignIn loginUser={loginUser} setUser={setUser} />
-          </Route>
-          <Route exact path="/signup" component={SignUp} />
-
-          <AuthProvider loginUser={loginUser}>
-            <Route exact path="/">
-              <TopPage loginUser={loginUser} />
+        <AuthContext.Provider value={loginUser}>
+          <Header />
+          <Switch>
+            <Route exact path="/signin">
+              <SignIn setUser={setUser} />
             </Route>
-            <Route exact path="/contents" component={Contents} />
-          </AuthProvider>
-        </Switch>
+            <Route exact path="/signup" component={SignUp} />
+            <AuthProvider>
+              <Route exact path="/">
+                <TopPage />
+              </Route>
+              <Route exact path="/contents" component={Contents} />
+            </AuthProvider>
+          </Switch>
+        </AuthContext.Provider>
       </Router>
     </div>
   );

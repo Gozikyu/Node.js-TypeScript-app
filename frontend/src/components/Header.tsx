@@ -1,9 +1,8 @@
-import { VFC, useState, useEffect, useCallback } from "react";
+import { VFC, useContext } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { useAuthContext } from "./AuthContext";
-import axios from "axios";
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
+import { AuthContext } from "../Router";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,10 +31,11 @@ type User = {
   name: string | undefined;
 };
 
-const Header: VFC<{ loginUser: User }> = ({ loginUser }) => {
+const Header: VFC = () => {
   const history = useHistory();
   const location = useLocation();
   const classes = useStyles();
+  const user = useContext(AuthContext);
 
   const pushToContentPage = () => {
     history.push("/contents");
@@ -44,15 +44,14 @@ const Header: VFC<{ loginUser: User }> = ({ loginUser }) => {
   const pushToTopPage = () => {
     history.push("/");
   };
-  console.log(loginUser.uid);
 
   return (
     <div className={classes.root}>
       <p className={classes.userName}>
-        {loginUser.name ? loginUser.name : "ログインしてください"}
+        {user.name ? user.name : "ログインしてください"}
       </p>
 
-      {loginUser.uid ? (
+      {user.uid ? (
         location.pathname === "/" ? (
           <Button className={classes.button} onClick={pushToContentPage}>
             ワード検索ページヘ

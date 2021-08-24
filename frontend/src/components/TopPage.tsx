@@ -1,4 +1,5 @@
-import { VFC, useState, useEffect, useCallback } from "react";
+import { VFC, useState, useCallback, useContext } from "react";
+import { AuthContext } from "../Router";
 import axios from "axios";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -22,14 +23,10 @@ type User = {
   name: string | undefined;
 };
 
-const TopPage: VFC<{ loginUser: User }> = ({ loginUser }) => {
-  const initialUser = {
-    id: 0,
-    name: "initialState",
-  };
+const TopPage: VFC = () => {
+  const user = useContext(AuthContext);
 
-  const [user, setUser] = useState(initialUser),
-    [title, setTitle] = useState(""),
+  const [title, setTitle] = useState(""),
     [category, setCategory] = useState(""),
     [url, setUrl] = useState(""),
     [description, setDescription] = useState("");
@@ -76,30 +73,11 @@ const TopPage: VFC<{ loginUser: User }> = ({ loginUser }) => {
     name: string;
   };
 
-  const isUser = useCallback((arg: any): arg is User => {
-    if (arg.id && arg.name) {
-      return true;
-    } else {
-      return false;
-    }
-  }, []);
-
-  const getUser = useCallback(() => {
-    axios
-      .get("http://localhost:80/users", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        if (isUser(res.data)) setUser(res.data);
-      });
-  }, [isUser]);
-
   const submitData = useCallback(() => {
-    console.log("aaaaaaaa");
     axios
       .post("http://localhost:80/contents", {
         data: {
-          uid: loginUser.uid,
+          uid: user.uid,
           title: title,
           category: category,
           url: url,
@@ -118,10 +96,6 @@ const TopPage: VFC<{ loginUser: User }> = ({ loginUser }) => {
         alert(err);
       });
   }, [title, category, url, description]);
-
-  useEffect(() => {
-    getUser();
-  }, [getUser, isUser]);
 
   return (
     <div className="container">

@@ -22,10 +22,7 @@ type User = {
   name: string | undefined;
 };
 
-const SignIn: VFC<{ loginUser: User; setUser: (user: User) => void }> = ({
-  loginUser,
-  setUser,
-}) => {
+const SignIn: VFC<{ setUser: (user: User) => void }> = ({ setUser }) => {
   const [email, setEmail] = useState(""),
     [pass, setPass] = useState("");
 
@@ -84,7 +81,6 @@ const SignIn: VFC<{ loginUser: User; setUser: (user: User) => void }> = ({
       });
   };
 
-  console.log(loginUser);
   return (
     <div className={classes.root}>
       <TextField
