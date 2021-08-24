@@ -79,10 +79,12 @@ router.get("/", function (req, res, next) { return __awaiter(void 0, void 0, voi
     });
 }); });
 router.post("/", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var snapshot, data;
+    var snapshot, data, addedData, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, firebase_1.db.collection("contents")];
+            case 0:
+                console.log("いいいいいいいいいいいいいいい");
+                return [4 /*yield*/, firebase_1.db.collection("contents")];
             case 1:
                 snapshot = _a.sent();
                 data = {
@@ -92,17 +94,21 @@ router.post("/", function (req, res, next) { return __awaiter(void 0, void 0, vo
                     url: req.body.data.url,
                     description: req.body.data.description,
                 };
-                snapshot
-                    .doc()
-                    .set(data)
-                    .then(function (content) {
-                    console.log(content);
-                    res.json(content);
-                })
-                    .catch(function (err) {
-                    console.error(err);
-                });
-                return [2 /*return*/];
+                _a.label = 2;
+            case 2:
+                _a.trys.push([2, 4, , 5]);
+                return [4 /*yield*/, snapshot.doc().set(data)];
+            case 3:
+                addedData = _a.sent();
+                console.log(addedData);
+                res.json(addedData);
+                return [3 /*break*/, 5];
+            case 4:
+                err_1 = _a.sent();
+                console.error(err_1);
+                res.json(err_1);
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
         }
     });
 }); });

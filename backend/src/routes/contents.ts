@@ -53,6 +53,7 @@ router.get("/", async (req, res, next) => {
 });
 
 router.post("/", async (req, res, next) => {
+  console.log("いいいいいいいいいいいいいいい");
   const snapshot = await db.collection("contents");
   const data = {
     uid: req.body.data.uid,
@@ -62,16 +63,14 @@ router.post("/", async (req, res, next) => {
     description: req.body.data.description,
   };
 
-  snapshot
-    .doc()
-    .set(data)
-    .then((content) => {
-      console.log(content);
-      res.json(content);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+  try {
+    const addedData = await snapshot.doc().set(data);
+    console.log(addedData);
+    res.json(addedData);
+  } catch (err) {
+    console.error(err);
+    res.json(err);
+  }
 });
 
 router.post("/search", async (req, res, next) => {
